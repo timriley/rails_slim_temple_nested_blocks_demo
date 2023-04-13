@@ -3,6 +3,50 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.2.0"
 
+
+# -----------------------------------------------------------------------------
+# Slim/Temple gem pairs demonstrating that github.com/judofyr/temple/pull/112
+# does not introduce a bug with Slim/Rails.
+#
+# Try each of these in sequence to see the bug come and go.
+# -----------------------------------------------------------------------------
+
+# 🚫 Using releases or git refs as of 21 December 2022 replicates the bug:
+#
+# ❯ curl -s http://localhost:3000/posts| grep microcopy
+#    <divtestyes<divtestyes <divtestyes class="<divtestyes<divtestyes <divtestyes class="">awesome microcopy</div>
+#
+# gem "slim", github: "slim-template/slim", ref: "45a8087"
+# gem "temple", "= 0.9.1"
+
+# ✅ Using the latest releases shows the bug is no longer present:
+#
+# ❯ curl -s http://localhost:3000/posts| grep microcopy
+#     <div class="test yes">awesome microcopy</div>
+#
+# gem "slim", "= 5.1.0"
+# gem "temple", "= 0.10.0"
+
+# ✅ Using latest slim plus a branch of temple with https://github.com/judofyr/temple/pull/112
+# reintroduced does _not_ reintroduce the bug:
+#
+# ❯ curl -s http://localhost:3000/posts| grep microcopy
+#     <div class="test yes">awesome microcopy</div>
+#
+# gem "slim", "= 5.1.0"
+# gem "temple", github: "timriley/temple", branch: "propagate-options-to-capture-generator"
+
+
+
+
+
+
+
+
+# -----------------------------------------------------------------------------
+# Standard Rails `Gemfile` below
+# -----------------------------------------------------------------------------
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "= 7.0.4"
 
